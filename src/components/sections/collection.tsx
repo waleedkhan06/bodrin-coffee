@@ -52,19 +52,27 @@ export function CollectionSection() {
       <div className="mx-auto max-w-[1480px] px-6 md:px-10">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {COLLECTION.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={reducedMotion ? false : { opacity: 0, y: 40 }}
-              whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-            >
-              <ProductCard item={item} index={index} />
-            </motion.div>
+            <CollectionItem key={item.id} item={item} index={index} reducedMotion={reducedMotion} />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function CollectionItem({ item, index, reducedMotion }: { item: (typeof COLLECTION)[number]; index: number; reducedMotion: boolean }) {
+  if (reducedMotion) {
+    return <ProductCard item={item} index={index} />;
+  }
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+    >
+      <ProductCard item={item} index={index} />
+    </motion.div>
   );
 }
 
