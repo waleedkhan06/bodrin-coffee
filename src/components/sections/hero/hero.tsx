@@ -46,7 +46,8 @@ export function Hero() {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster="/Maison Noir.jpg"
           className="h-full w-full object-cover"
           style={{ filter: "brightness(0.55) saturate(1.1)" }}
         >
