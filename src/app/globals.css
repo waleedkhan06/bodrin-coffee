@@ -1,26 +1,264 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   BODRIN — Luxury Coffee Design System (Tailwind v4)
+   -----------------------------------------------------------------------------
+   In Tailwind v4, `@theme` registers tokens that drive utility-class generation
+   AND exposes them as CSS variables on :root. Without `inline`, Tailwind emits
+   both the utility classes (e.g., bg-espresso) and the corresponding CSS
+   variables — which is what we want so direct `var(--color-…)` references in
+   raw CSS resolve correctly.
+   ============================================================================= */
+@theme {
+  /* Brand palette — deep espresso, chocolate, cream, gold */
+  --color-espresso: #0c0a08;
+  --color-espresso-soft: #14110d;
+  --color-chocolate: #2c2118;
+  --color-chocolate-soft: #3a2c20;
+  --color-cream: #f5ede4;
+  --color-cream-soft: #ebe1d4;
+  --color-gold: #d4af88;
+  --color-gold-bright: #e6c8a3;
+  --color-gold-deep: #a8845e;
+
+  /* Semantic */
+  --color-background: #0c0a08;
+  --color-foreground: #f5ede4;
+  --color-muted: #a89888;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, monospace;
+
+  /* Spacing & sizing */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+
+  /* Custom animations exposed as utility shortcuts */
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-steam: steam 4s ease-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Keyframes live outside @theme so they stay available globally regardless
+   of how the @theme block is processed. */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+@keyframes steam {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  100% { transform: translateY(-120px) scale(1.6); opacity: 0; }
+}
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroZoom {
+  0% { transform: scale(1.0) translate(0, 0); }
+  100% { transform: scale(1.08) translate(-1%, -1%); }
+}
+
+/* Belt-and-suspenders: also define the brand vars on :root so that any direct
+   `var(--color-…)` reference resolves regardless of how Tailwind processes
+   the @theme block above. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-espresso: #0c0a08;
+  --color-espresso-soft: #14110d;
+  --color-chocolate: #2c2118;
+  --color-chocolate-soft: #3a2c20;
+  --color-cream: #f5ede4;
+  --color-cream-soft: #ebe1d4;
+  --color-gold: #d4af88;
+  --color-gold-bright: #e6c8a3;
+  --color-gold-deep: #a8845e;
+  --color-background: #0c0a08;
+  --color-foreground: #f5ede4;
+  --color-muted: #a89888;
+  --color-border: rgba(212, 175, 136, 0.12);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* =============================================================================
+   Base
+   ============================================================================= */
+:root {
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  background-color: #0c0a08 !important;
+  color: #f5ede4 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0c0a08 !important;
+  background-color: var(--color-espresso, #0c0a08) !important;
+  color: #f5ede4 !important;
+  color: var(--color-cream, #f5ede4) !important;
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.011em;
+  overflow-x: hidden;
 }
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-espresso);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-espresso); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-gold-deep), var(--color-chocolate));
+  border-radius: 999px;
+}
+
+/* =============================================================================
+   Utility classes
+   ============================================================================= */
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+@utility glass {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 237, 228, 0.06) 0%,
+    rgba(245, 237, 228, 0.02) 100%
+  );
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(245, 237, 228, 0.08);
+}
+
+@utility glass-gold {
+  background: linear-gradient(
+    135deg,
+    rgba(212, 175, 136, 0.12) 0%,
+    rgba(212, 175, 136, 0.04) 100%
+  );
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(212, 175, 136, 0.18);
+}
+
+@utility text-gradient-gold {
+  background: linear-gradient(
+    180deg,
+    #f5ede4 0%,
+    #e6c8a3 45%,
+    #d4af88 70%,
+    #a8845e 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-shadow-glow {
+  text-shadow:
+    0 0 40px rgba(212, 175, 136, 0.25),
+    0 0 80px rgba(212, 175, 136, 0.12);
+}
+
+@utility hairline {
+  position: relative;
+}
+.hairline::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 136, 0.4) 50%,
+    transparent 100%
+  );
+}
+
+@utility noise {
+  position: relative;
+}
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =============================================================================
+   GSAP / Reveal helpers (set initial state to avoid FOUC)
+   ============================================================================= */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(60px);
+  will-change: opacity, transform;
+}
+
+.reveal-mask {
+  clip-path: inset(0 100% 0 0);
+  will-change: clip-path;
+}
+
+.reveal-char {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Better focus rings */
+:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
