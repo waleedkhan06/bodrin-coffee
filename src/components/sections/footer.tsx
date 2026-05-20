@@ -89,9 +89,9 @@ export function Footer() {
             >
               Welcome to the table — check your inbox.
             </motion.p>
-            <p className="text-[11px] tracking-wide text-cream/40">
+            <p className="text-[11px] tracking-wide text-cream/60">
               By subscribing you agree to our{" "}
-              <Link href="/privacy" className="text-cream/60 underline underline-offset-2 hover:text-cream">
+              <Link href="/privacy" className="text-cream/80 underline underline-offset-2 hover:text-cream">
                 privacy policy
               </Link>
               . Unsubscribe in one click.

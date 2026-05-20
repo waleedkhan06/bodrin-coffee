@@ -94,10 +94,11 @@ export function BrewingSection() {
                   child?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
                 }
               }}
-              className="h-1.5 rounded-full transition-all duration-300"
+              aria-label={`Go to step ${i + 1}`}
+              className="h-4 w-4 rounded-full transition-all duration-300"
               style={{
-                width: i === active ? "24px" : "6px",
                 backgroundColor: i === active ? "#d4af88" : "rgba(212,175,136,0.2)",
+                transform: i === active ? "scaleX(1.5)" : "scaleX(1)",
               }}
             />
           ))}
