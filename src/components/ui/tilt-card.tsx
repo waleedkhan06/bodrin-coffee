@@ -7,6 +7,7 @@ import {
 } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 type Props = {
   children: ReactNode;
@@ -22,6 +23,7 @@ export function TiltCard({
   perspective = 1000,
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const reducedMotion = useReducedMotion();
 
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -36,7 +38,7 @@ export function TiltCard({
   const sheenBg = useMotionTemplate`radial-gradient(420px circle at ${sheenX}px ${sheenY}px, rgba(212,175,136,0.18), transparent 55%)`;
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current || reducedMotion) return;
     const rect = ref.current.getBoundingClientRect();
     px.set((e.clientX - rect.left) / rect.width - 0.5);
     py.set((e.clientY - rect.top) / rect.height - 0.5);
@@ -52,18 +54,20 @@ export function TiltCard({
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, transformPerspective: perspective }}
+      style={reducedMotion ? {} : { rotateX, rotateY, transformPerspective: perspective }}
       className={cn(
         "relative will-change-transform [transform-style:preserve-3d]",
         className
       )}
     >
       {children}
-      <motion.span
-        aria-hidden
-        style={{ background: sheenBg } as never}
-        className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen"
-      />
+      {!reducedMotion && (
+        <motion.span
+          aria-hidden
+          style={{ background: sheenBg } as never}
+          className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen"
+        />
+      )}
     </motion.div>
   );
 }

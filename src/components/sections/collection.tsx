@@ -9,8 +9,11 @@ import { RevealText } from "@/components/ui/reveal-text";
 import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useToast } from "@/contexts/toast-context";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function CollectionSection() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <section id="collection" className="relative bg-espresso pt-28 pb-16 md:pt-40 md:pb-20">
       {/* Section header */}
@@ -51,8 +54,8 @@ export function CollectionSection() {
           {COLLECTION.map((item, index) => (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={reducedMotion ? false : { opacity: 0, y: 40 }}
+              whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
             >
@@ -75,6 +78,7 @@ function ProductCard({
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const toast = useToast();
+  const reducedMotion = useReducedMotion();
   const wishlisted = isInWishlist(item.id);
 
   const handleAddToCart = () => {
@@ -103,7 +107,7 @@ function ProductCard({
       <motion.div
         className="group relative overflow-hidden rounded-[28px]"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-        whileHover={{ y: -8 }}
+        whileHover={reducedMotion ? undefined : { y: -8 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Image */}
