@@ -3,7 +3,6 @@
 import { useRef, useState, type ReactNode, type MouseEvent } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 type Variant = "gold" | "ghost" | "outline";
 
@@ -13,9 +12,15 @@ type Props = {
   className?: string;
   onClick?: () => void;
   href?: string;
+  /** Strength of the magnetic pull. Default 0.35. */
   strength?: number;
 };
 
+/**
+ * Premium magnetic CTA button.
+ * Spring-tracks the cursor inside the bounding box for a buttery hover pull,
+ * with a glassmorphic gold variant for primary CTAs.
+ */
 export function MagneticButton({
   children,
   variant = "gold",
@@ -26,7 +31,6 @@ export function MagneticButton({
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [hovered, setHovered] = useState(false);
-  const reducedMotion = useReducedMotion();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -34,7 +38,7 @@ export function MagneticButton({
   const springY = useSpring(y, { stiffness: 250, damping: 18, mass: 0.6 });
 
   const onMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current || reducedMotion) return;
+    if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const offsetX = e.clientX - (rect.left + rect.width / 2);
     const offsetY = e.clientY - (rect.top + rect.height / 2);
@@ -63,23 +67,26 @@ export function MagneticButton({
   const Inner = (
     <motion.div
       ref={ref}
-      style={reducedMotion ? {} : { x: springX, y: springY }}
+      style={{ x: springX, y: springY }}
       onMouseEnter={() => setHovered(true)}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
       onClick={onClick}
       className={cn(baseClasses, variants[variant], className)}
     >
+      {/* Inner content slightly counter-translates for a parallax feel */}
       <motion.span
+        animate={{ x: hovered ? 0 : 0, y: hovered ? 0 : 0 }}
         className="relative z-10 inline-flex items-center gap-2"
       >
         {children}
       </motion.span>
 
+      {/* Subtle gold sheen on hover */}
       {variant === "gold" && (
         <motion.span
           aria-hidden
-          initial={false}
+          initial={{ opacity: 0 }}
           animate={{ opacity: hovered ? 1 : 0 }}
           transition={{ duration: 0.4 }}
           className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(120%_120%_at_50%_0%,rgba(255,255,255,0.45),transparent_60%)]"

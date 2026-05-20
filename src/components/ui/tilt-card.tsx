@@ -7,7 +7,6 @@ import {
 } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 type Props = {
   children: ReactNode;
@@ -23,7 +22,6 @@ export function TiltCard({
   perspective = 1000,
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const reducedMotion = useReducedMotion();
 
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -38,7 +36,7 @@ export function TiltCard({
   const sheenBg = useMotionTemplate`radial-gradient(420px circle at ${sheenX}px ${sheenY}px, rgba(212,175,136,0.18), transparent 55%)`;
 
   const onMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current || reducedMotion) return;
+    if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     px.set((e.clientX - rect.left) / rect.width - 0.5);
     py.set((e.clientY - rect.top) / rect.height - 0.5);
@@ -48,18 +46,6 @@ export function TiltCard({
     px.set(0);
     py.set(0);
   };
-
-  // On mobile/reduced motion, render plain div — no Framer Motion overhead
-  if (reducedMotion) {
-    return (
-      <div
-        ref={ref}
-        className={cn("relative", className)}
-      >
-        {children}
-      </div>
-    );
-  }
 
   return (
     <motion.div

@@ -20,18 +20,18 @@ import {
   MapPin,
   ShoppingBag,
 } from "lucide-react";
-import { useUser, SignInButton, useClerk } from "@clerk/nextjs";
+import { useUser, SignInButton } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { Navigation } from "@/components/nav/navigation";
 import { Footer } from "@/components/sections/footer";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useOrders } from "@/contexts/order-context";
-import { ClerkErrorBoundary } from "@/components/providers/clerk-error-boundary";
 import Link from "next/link";
 
 type Tab = "profile" | "orders" | "wishlist" | "settings";
 
-function AccountContent() {
+export default function AccountPage() {
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
   const { items: wishlistItems } = useWishlist();
@@ -40,27 +40,39 @@ function AccountContent() {
 
   if (!isLoaded) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/30 border-t-gold" />
-      </div>
+      <>
+        <Navigation />
+        <main className="min-h-screen" style={{ backgroundColor: "#0c0a08", color: "#f5ede4" }}>
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/30 border-t-gold" />
+          </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
   if (!isSignedIn) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-6">
-        <h1 className="font-display text-balance text-center text-3xl leading-[0.95] tracking-tight sm:text-4xl md:text-5xl" style={{ color: "#f5ede4" }}>
-          Sign In to Your Account
-        </h1>
-        <p className="mt-4 text-center text-sm sm:text-base" style={{ color: "rgba(245, 237, 228, 0.6)" }}>
-          Access your orders, wishlist, and preferences.
-        </p>
-        <SignInButton>
-          <div className="mt-8">
-            <MagneticButton variant="gold">Sign In</MagneticButton>
+      <>
+        <Navigation />
+        <main className="min-h-screen" style={{ backgroundColor: "#0c0a08", color: "#f5ede4" }}>
+          <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-6">
+            <h1 className="font-display text-balance text-center text-3xl leading-[0.95] tracking-tight sm:text-4xl md:text-5xl" style={{ color: "#f5ede4" }}>
+              Sign In to Your Account
+            </h1>
+            <p className="mt-4 text-center text-sm sm:text-base" style={{ color: "rgba(245, 237, 228, 0.6)" }}>
+              Access your orders, wishlist, and preferences.
+            </p>
+            <SignInButton>
+              <div className="mt-8">
+                <MagneticButton variant="gold">Sign In</MagneticButton>
+              </div>
+            </SignInButton>
           </div>
-        </SignInButton>
-      </div>
+        </main>
+        <Footer />
+      </>
     );
   }
 
@@ -72,91 +84,79 @@ function AccountContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 md:px-10 md:py-32 lg:px-12">
-      {/* Header */}
-      <div className="mb-8 sm:mb-12">
-        <p className="text-[10px] uppercase tracking-[0.4em]" style={{ color: "#a8845e" }}>
-          My Account
-        </p>
-        <h1 className="mt-2 font-display text-balance text-3xl leading-[0.95] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" style={{ color: "#f5ede4" }}>
-          Welcome back, {user.firstName || user.username || "Member"}
-        </h1>
-      </div>
-
-      <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
-        {/* Sidebar tabs */}
-        <div className="lg:col-span-3">
-          <nav className="grid grid-cols-2 gap-2 lg:flex lg:flex-col lg:gap-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm transition-all duration-300 lg:justify-start ${
-                  activeTab === tab.id
-                    ? "glass-gold text-cream"
-                    : "text-cream/60 hover:text-cream hover:bg-white/5"
-                }`}
-              >
-                {tab.icon}
-                <span className="truncate">{tab.label}</span>
-                {tab.id === "wishlist" && wishlistItems.length > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shrink-0" style={{ backgroundColor: "#d4af88", color: "#0c0a08" }}>
-                    {wishlistItems.length}
-                  </span>
-                )}
-                {tab.id === "orders" && orders.length > 0 && (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shrink-0" style={{ backgroundColor: "#d4af88", color: "#0c0a08" }}>
-                    {orders.length}
-                  </span>
-                )}
-              </button>
-            ))}
-
-            {/* Sign out */}
-            <button
-              onClick={() => signOut()}
-              className="col-span-2 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm text-cream/40 transition-colors hover:text-red-400 lg:col-span-1 lg:mt-2 lg:justify-start"
-            >
-              <LogOut size={16} strokeWidth={1.6} />
-              <span>Sign Out</span>
-            </button>
-          </nav>
-        </div>
-
-        {/* Content */}
-        <div className="lg:col-span-9 min-w-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {activeTab === "profile" && <ProfileTab user={user} />}
-              {activeTab === "orders" && <OrdersTab />}
-              {activeTab === "wishlist" && <WishlistTab />}
-              {activeTab === "settings" && <SettingsTab />}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function AccountPage() {
-  return (
     <>
       <Navigation />
       <main className="min-h-screen" style={{ backgroundColor: "#0c0a08", color: "#f5ede4" }}>
-        <ClerkErrorBoundary fallback={
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/30 border-t-gold" />
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24 md:px-10 md:py-32 lg:px-12">
+          {/* Header */}
+          <div className="mb-8 sm:mb-12">
+            <p className="text-[10px] uppercase tracking-[0.4em]" style={{ color: "#a8845e" }}>
+              My Account
+            </p>
+            <h1 className="mt-2 font-display text-balance text-3xl leading-[0.95] tracking-tight sm:text-4xl md:text-5xl lg:text-6xl" style={{ color: "#f5ede4" }}>
+              Welcome back, {user.firstName || user.username || "Member"}
+            </h1>
           </div>
-        }>
-          <AccountContent />
-        </ClerkErrorBoundary>
+
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+            {/* Sidebar tabs — 2x3 grid on mobile, vertical stack on lg+ */}
+            <div className="lg:col-span-3">
+              <nav className="grid grid-cols-2 gap-2 lg:flex lg:flex-col lg:gap-1">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm transition-all duration-300 lg:justify-start ${
+                      activeTab === tab.id
+                        ? "glass-gold text-cream"
+                        : "text-cream/60 hover:text-cream hover:bg-white/5"
+                    }`}
+                  >
+                    {tab.icon}
+                    <span className="truncate">{tab.label}</span>
+                    {tab.id === "wishlist" && wishlistItems.length > 0 && (
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shrink-0" style={{ backgroundColor: "#d4af88", color: "#0c0a08" }}>
+                        {wishlistItems.length}
+                      </span>
+                    )}
+                    {tab.id === "orders" && orders.length > 0 && (
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shrink-0" style={{ backgroundColor: "#d4af88", color: "#0c0a08" }}>
+                        {orders.length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+
+                {/* Sign out — full width on mobile */}
+                <button
+                  onClick={() => signOut()}
+                  className="col-span-2 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm text-cream/40 transition-colors hover:text-red-400 lg:col-span-1 lg:justify-start lg:mt-2"
+                >
+                  <LogOut size={16} strokeWidth={1.6} />
+                  <span>Sign Out</span>
+                </button>
+              </nav>
+            </div>
+
+            {/* Content */}
+            <div className="lg:col-span-9 min-w-0">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  {activeTab === "profile" && <ProfileTab user={user} />}
+                  {activeTab === "orders" && <OrdersTab />}
+                  {activeTab === "wishlist" && <WishlistTab />}
+                  {activeTab === "settings" && <SettingsTab />}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
       </main>
       <Footer />
     </>

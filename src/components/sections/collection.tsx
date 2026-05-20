@@ -9,11 +9,8 @@ import { RevealText } from "@/components/ui/reveal-text";
 import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useToast } from "@/contexts/toast-context";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function CollectionSection() {
-  const reducedMotion = useReducedMotion();
-
   return (
     <section id="collection" className="relative bg-espresso pt-28 pb-16 md:pt-40 md:pb-20">
       {/* Section header */}
@@ -52,27 +49,19 @@ export function CollectionSection() {
       <div className="mx-auto max-w-[1480px] px-6 md:px-10">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {COLLECTION.map((item, index) => (
-            <CollectionItem key={item.id} item={item} index={index} reducedMotion={reducedMotion} />
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+            >
+              <ProductCard item={item} index={index} />
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function CollectionItem({ item, index, reducedMotion }: { item: (typeof COLLECTION)[number]; index: number; reducedMotion: boolean }) {
-  if (reducedMotion) {
-    return <ProductCard item={item} index={index} />;
-  }
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
-    >
-      <ProductCard item={item} index={index} />
-    </motion.div>
   );
 }
 
@@ -86,7 +75,6 @@ function ProductCard({
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const toast = useToast();
-  const reducedMotion = useReducedMotion();
   const wishlisted = isInWishlist(item.id);
 
   const handleAddToCart = () => {
@@ -112,9 +100,11 @@ function ProductCard({
 
   return (
     <TiltCard>
-      <div
+      <motion.div
         className="group relative overflow-hidden rounded-[28px]"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Image */}
         <div className="relative aspect-[4/5] overflow-hidden">
@@ -222,7 +212,7 @@ function ProductCard({
             background: "linear-gradient(to right, transparent, rgba(212, 175, 136, 0.3), transparent)"
           }}
         />
-      </div>
+      </motion.div>
     </TiltCard>
   );
 }

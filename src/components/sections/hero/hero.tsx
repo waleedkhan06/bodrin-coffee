@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { RevealText } from "@/components/ui/reveal-text";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { ArrowRight, Star } from "lucide-react";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,10 +14,9 @@ if (typeof window !== "undefined") {
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!sectionRef.current || reducedMotion) return;
+    if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
       gsap.to("[data-hero-overlay]", {
         yPercent: -18,
@@ -33,7 +31,7 @@ export function Hero() {
       });
     }, sectionRef);
     return () => ctx.revert();
-  }, [reducedMotion]);
+  }, []);
 
   return (
     <section
@@ -74,7 +72,7 @@ export function Hero() {
       >
         {/* Top eyebrow */}
         <motion.div
-          initial={reducedMotion ? false : { opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6 }}
           className="flex items-center gap-3 text-[10px] uppercase tracking-[0.4em]"
@@ -88,13 +86,13 @@ export function Hero() {
         {/* Center headline */}
         <div className="flex flex-1 flex-col items-center justify-center gap-8 text-center">
           <h1 className="font-display max-w-[16ch] text-balance text-[12vw] leading-[0.95] tracking-tight md:text-[6.4vw] lg:max-w-[18ch] lg:text-[5.4rem] xl:text-[6.4rem]" style={{ color: "#f5ede4" }}>
-            <RevealText as="span" delay={reducedMotion ? 0 : 0.8} stagger={reducedMotion ? 0 : 0.07} className="block">
+            <RevealText as="span" delay={0.8} stagger={0.07} className="block">
               The Definitive Taste
             </RevealText>
             <RevealText
               as="span"
-              delay={reducedMotion ? 0 : 1.2}
-              stagger={reducedMotion ? 0 : 0.07}
+              delay={1.2}
+              stagger={0.07}
               className="block italic"
             >
               in every sip.
@@ -102,9 +100,9 @@ export function Hero() {
           </h1>
 
           <motion.p
-            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: reducedMotion ? 0 : 1.8 }}
+            transition={{ duration: 1, delay: 1.8 }}
             className="font-display max-w-lg text-balance text-base italic md:text-lg"
             style={{ color: "rgba(245, 237, 228, 0.6)" }}
           >
@@ -113,9 +111,9 @@ export function Hero() {
 
           {/* CTAs */}
           <motion.div
-            initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: reducedMotion ? 0 : 2.1 }}
+            transition={{ duration: 1, delay: 2.1 }}
             className="mt-4 flex flex-col items-center gap-4 sm:flex-row"
           >
             <MagneticButton variant="gold" href="#collection">
@@ -130,9 +128,9 @@ export function Hero() {
 
         {/* Bottom strip */}
         <motion.div
-          initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: reducedMotion ? 0 : 2.4 }}
+          transition={{ duration: 1, delay: 2.4 }}
           className="flex w-full max-w-6xl flex-col items-center justify-between gap-6 border-t pt-6 text-[11px] uppercase tracking-[0.3em] md:flex-row"
           style={{ color: "rgba(245, 237, 228, 0.55)", borderColor: "rgba(212, 175, 136, 0.1)" }}
         >

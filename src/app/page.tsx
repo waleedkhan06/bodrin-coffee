@@ -1,16 +1,31 @@
 import { Navigation } from "@/components/nav/navigation";
-import dynamic from "next/dynamic";
 import { Hero } from "@/components/sections/hero/hero";
 import { CollectionSection } from "@/components/sections/collection";
 import { CraftsmanshipSection } from "@/components/sections/craftsmanship";
 import { FeaturedProductSection } from "@/components/sections/featured-product";
+import { BrewingSection } from "@/components/sections/brewing";
+import { TestimonialsSection } from "@/components/sections/testimonials";
 import { SubscriptionSection } from "@/components/sections/subscription";
 import { Footer } from "@/components/sections/footer";
 
-// Only defer below-fold sections — hero + collection must be SSR for LCP
-const BrewingSection = dynamic(() => import("@/components/sections/brewing").then((m) => ({ default: m.BrewingSection })));
-const TestimonialsSection = dynamic(() => import("@/components/sections/testimonials").then((m) => ({ default: m.TestimonialsSection })));
-
+/**
+ * BODRIN — single-page luxury coffee brand site.
+ *
+ * Composition (top to bottom):
+ *   • Sticky navigation (shrinks past 80px scroll, glassmorphic)
+ *   • Cinematic Hero  — bilingual headline + CTAs
+ *   • Collection      — premium grid layout of single-origin lots
+ *   • Craftsmanship   — three-chapter parallax storytelling
+ *   • Featured Product — interactive product with variant swap
+ *   • Brewing Ritual  — sticky-illustration step-by-step guide
+ *   • Testimonials    — cross-fade quotes with portrait grid
+ *   • Membership      — three subscription tiers
+ *   • Footer          — newsletter + massive wordmark
+ *
+ * The whole page is wrapped by `LenisProvider` (in the root layout) which
+ * synchronizes Lenis smooth scroll with GSAP's ScrollTrigger so every
+ * scroll-driven animation feels native and buttery.
+ */
 export default function Home() {
   return (
     <>
@@ -20,19 +35,11 @@ export default function Home() {
         <CollectionSection />
         <CraftsmanshipSection />
         <FeaturedProductSection />
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 800px" }}>
-          <BrewingSection />
-        </div>
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 800px" }}>
-          <TestimonialsSection />
-        </div>
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
-          <SubscriptionSection />
-        </div>
+        <BrewingSection />
+        <TestimonialsSection />
+        <SubscriptionSection />
       </main>
-      <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 1000px" }}>
-        <Footer />
-      </div>
+      <Footer />
     </>
   );
 }

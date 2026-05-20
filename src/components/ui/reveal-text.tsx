@@ -4,7 +4,6 @@ import { useEffect, useRef, type ElementType, type ReactNode, createElement } fr
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,11 +13,20 @@ type Props = {
   children: ReactNode;
   as?: ElementType;
   className?: string;
+  /** Delay before the reveal kicks in. */
   delay?: number;
+  /** Stagger between words. */
   stagger?: number;
+  /** Duration of each word reveal. */
   duration?: number;
 };
 
+/**
+ * Splits children text into word-spans with a clipping mask, then GSAP
+ * reveals them on scroll for a cinematic typography feel.
+ *
+ * Renders any tag via `as`. Children must be a plain string.
+ */
 export function RevealText({
   children,
   as: Tag = "span",
@@ -28,10 +36,9 @@ export function RevealText({
   duration = 1.1,
 }: Props) {
   const ref = useRef<any>(null);
-  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (!ref.current || reducedMotion) return;
+    if (!ref.current) return;
     const el = ref.current;
 
     const ctx = gsap.context(() => {
@@ -52,8 +59,9 @@ export function RevealText({
     }, el);
 
     return () => ctx.revert();
-  }, [delay, stagger, duration, reducedMotion]);
+  }, [delay, stagger, duration]);
 
+  // Coerce to string and split into words preserving spaces.
   const text = typeof children === "string" ? children : String(children);
   const words = text.split(" ");
 
@@ -68,7 +76,7 @@ export function RevealText({
         key={`${word}-${i}`}
         className="inline-block overflow-hidden align-bottom"
       >
-        <span data-word className={cn("inline-block", reducedMotion ? "" : "will-change-transform")}>
+        <span data-word className="inline-block will-change-transform">
           {word}
           {i < words.length - 1 ? "\u00A0" : ""}
         </span>

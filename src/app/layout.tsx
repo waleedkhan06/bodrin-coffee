@@ -5,7 +5,7 @@ import { CartProvider } from "@/contexts/cart-context";
 import { WishlistProvider } from "@/contexts/wishlist-context";
 import { OrderProvider } from "@/contexts/order-context";
 import { ToastProvider } from "@/contexts/toast-context";
-import { ClerkProviderWrapper } from "@/components/providers/clerk-provider-wrapper";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const inter = Inter({
@@ -72,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProviderWrapper>
+    <ClerkProvider>
       <html
         lang="en"
         className={`${inter.variable} ${playfair.variable}`}
@@ -96,6 +96,6 @@ export default function RootLayout({
           </ToastProvider>
         </body>
       </html>
-    </ClerkProviderWrapper>
+    </ClerkProvider>
   );
 }
