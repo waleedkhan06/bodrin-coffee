@@ -12,6 +12,41 @@ import { cn } from "@/lib/utils";
 import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useUser, SignInButton } from "@clerk/nextjs";
+import { ClerkErrorBoundary } from "@/components/providers/clerk-error-boundary";
+
+function ClerkAuthButtons() {
+  const { isSignedIn } = useUser();
+
+  return !isSignedIn ? (
+    <div className="hidden md:block">
+      <SignInButton>
+        <MagneticButton variant="outline">Sign In</MagneticButton>
+      </SignInButton>
+    </div>
+  ) : (
+    <div className="hidden md:block">
+      <Link href="/account">
+        <MagneticButton variant="outline">Account</MagneticButton>
+      </Link>
+    </div>
+  );
+}
+
+function MobileClerkLink() {
+  const { isSignedIn } = useUser();
+
+  return !isSignedIn ? (
+    <SignInButton>
+      <button className="font-display text-2xl tracking-tight text-cream transition-colors hover:text-gold">
+        Sign In
+      </button>
+    </SignInButton>
+  ) : (
+    <Link href="/account" className="font-display text-2xl tracking-tight text-cream transition-colors hover:text-gold">
+      Account
+    </Link>
+  );
+}
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -21,7 +56,6 @@ export function Navigation() {
   const [activeSection, setActiveSection] = useState("");
   const { items } = useCart();
   const { items: wishlistItems } = useWishlist();
-  const { isSignedIn } = useUser();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
   const [badgePop, setBadgePop] = useState(false);
@@ -170,24 +204,16 @@ export function Navigation() {
               )}
             </button>
 
-            {/* Desktop only */}
-            {!isSignedIn ? (
-              <div className="hidden md:block">
-                <SignInButton>
-                  <MagneticButton variant="outline">
-                    Sign In
-                  </MagneticButton>
-                </SignInButton>
-              </div>
-            ) : (
+            {/* Desktop auth — wrapped in error boundary for Clerk ssr:false */}
+            <ClerkErrorBoundary fallback={
               <div className="hidden md:block">
                 <Link href="/account">
-                  <MagneticButton variant="outline">
-                    Account
-                  </MagneticButton>
+                  <MagneticButton variant="outline">Sign In</MagneticButton>
                 </Link>
               </div>
-            )}
+            }>
+              <ClerkAuthButtons />
+            </ClerkErrorBoundary>
 
             <div className="hidden md:block">
               <MagneticButton variant="gold" href="#membership">
@@ -281,24 +307,13 @@ export function Navigation() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.6 }}
             >
-              {!isSignedIn ? (
-                <SignInButton>
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="font-display text-2xl tracking-tight text-cream transition-colors hover:text-gold"
-                  >
-                    Sign In
-                  </button>
-                </SignInButton>
-              ) : (
-                <Link
-                  href="/account"
-                  onClick={() => setOpen(false)}
-                  className="font-display text-2xl tracking-tight text-cream transition-colors hover:text-gold"
-                >
-                  Account
+              <ClerkErrorBoundary fallback={
+                <Link href="/account" onClick={() => setOpen(false)} className="font-display text-2xl tracking-tight text-cream transition-colors hover:text-gold">
+                  Sign In
                 </Link>
-              )}
+              }>
+                <MobileClerkLink />
+              </ClerkErrorBoundary>
             </motion.div>
           </motion.div>
         )}
