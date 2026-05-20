@@ -49,25 +49,35 @@ export function TiltCard({
     py.set(0);
   };
 
+  // On mobile/reduced motion, render plain div — no Framer Motion overhead
+  if (reducedMotion) {
+    return (
+      <div
+        ref={ref}
+        className={cn("relative", className)}
+      >
+        {children}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      style={reducedMotion ? {} : { rotateX, rotateY, transformPerspective: perspective }}
+      style={{ rotateX, rotateY, transformPerspective: perspective }}
       className={cn(
         "relative will-change-transform [transform-style:preserve-3d]",
         className
       )}
     >
       {children}
-      {!reducedMotion && (
-        <motion.span
-          aria-hidden
-          style={{ background: sheenBg } as never}
-          className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen"
-        />
-      )}
+      <motion.span
+        aria-hidden
+        style={{ background: sheenBg } as never}
+        className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen"
+      />
     </motion.div>
   );
 }

@@ -112,11 +112,9 @@ function ProductCard({
 
   return (
     <TiltCard>
-      <motion.div
+      <div
         className="group relative overflow-hidden rounded-[28px]"
         style={{ backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-        whileHover={reducedMotion ? undefined : { y: -8 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Image */}
         <div className="relative aspect-[4/5] overflow-hidden">
@@ -224,7 +222,7 @@ function ProductCard({
             background: "linear-gradient(to right, transparent, rgba(212, 175, 136, 0.3), transparent)"
           }}
         />
-      </motion.div>
+      </div>
     </TiltCard>
   );
 }

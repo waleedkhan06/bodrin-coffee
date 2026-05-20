@@ -1,14 +1,15 @@
 import { Navigation } from "@/components/nav/navigation";
+import dynamic from "next/dynamic";
+import { Hero } from "@/components/sections/hero/hero";
+import { CollectionSection } from "@/components/sections/collection";
+import { CraftsmanshipSection } from "@/components/sections/craftsmanship";
+import { FeaturedProductSection } from "@/components/sections/featured-product";
+import { SubscriptionSection } from "@/components/sections/subscription";
 import { Footer } from "@/components/sections/footer";
-import {
-  Hero,
-  CollectionSection,
-  CraftsmanshipSection,
-  FeaturedProductSection,
-  BrewingSection,
-  TestimonialsSection,
-  SubscriptionSection,
-} from "@/components/sections/dynamic-sections";
+
+// Only defer below-fold sections — hero + collection must be SSR for LCP
+const BrewingSection = dynamic(() => import("@/components/sections/brewing").then((m) => ({ default: m.BrewingSection })));
+const TestimonialsSection = dynamic(() => import("@/components/sections/testimonials").then((m) => ({ default: m.TestimonialsSection })));
 
 export default function Home() {
   return (
