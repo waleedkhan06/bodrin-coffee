@@ -9,16 +9,6 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/**
- * LenisProvider — wraps the entire tree.
- *
- * Responsibilities:
- *  • Buttery smooth scrolling driven by Lenis.
- *  • Drives GSAP's ScrollTrigger so scroll-triggered animations stay perfectly
- *    in sync with the smooth scroll position (otherwise GSAP would read the
- *    native scroll which Lenis is overriding).
- *  • Disables itself on devices that prefer-reduced-motion.
- */
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -27,7 +17,10 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    if (reduceMotion) return;
+    // Skip Lenis on low-end mobile devices for better performance
+    const isLowEnd = typeof navigator !== "undefined" && navigator.hardwareConcurrency <= 4;
+
+    if (reduceMotion || isLowEnd) return;
 
     const lenis = new Lenis({
       duration: 1.15,
@@ -38,10 +31,8 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
     });
     lenisRef.current = lenis;
 
-    // Drive GSAP's ScrollTrigger from Lenis so animations stay in sync.
     lenis.on("scroll", ScrollTrigger.update);
 
-    // Hand the RAF loop to GSAP's ticker for perfectly aligned timing.
     const onTick = (time: number) => {
       lenis.raf(time * 1000);
     };
