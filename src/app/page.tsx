@@ -19,11 +19,19 @@ export default function Home() {
         <CollectionSection />
         <CraftsmanshipSection />
         <FeaturedProductSection />
-        <BrewingSection />
-        <TestimonialsSection />
-        <SubscriptionSection />
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 800px" }}>
+          <BrewingSection />
+        </div>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 800px" }}>
+          <TestimonialsSection />
+        </div>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}>
+          <SubscriptionSection />
+        </div>
       </main>
-      <Footer />
+      <div style={{ contentVisibility: "auto", containIntrinsicSize: "0 1000px" }}>
+        <Footer />
+      </div>
     </>
   );
 }
