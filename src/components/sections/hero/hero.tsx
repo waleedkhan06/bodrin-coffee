@@ -52,7 +52,7 @@ export function Hero() {
           className="h-full w-full object-cover"
           style={{ filter: "brightness(0.55) saturate(1.1)" }}
         >
-          <source src="/herocompress.mp4" type="video/mp4" />
+          <source src="/hero.mp4" type="video/mp4" />
         </video>
         {/* Gradient veil */}
         <div
