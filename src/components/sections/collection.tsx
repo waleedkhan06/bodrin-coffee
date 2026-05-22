@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Plus, Heart } from "lucide-react";
 import { COLLECTION } from "@/lib/constants";
@@ -73,20 +74,25 @@ function ProductCard({
   item: (typeof COLLECTION)[number];
   index: number;
 }) {
+  const [mounted, setMounted] = useState(false);
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const toast = useToast();
-  const wishlisted = isInWishlist(item.id);
+  const wishlisted = mounted && isInWishlist(item.id);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     addItem({
       id: item.id,
       name: item.name,
-      price: item.price,
-      variant: `${item.origin} · ${item.altitude}`,
+      price: 6,
+      variant: "Single Cup",
     });
-    toast(`${item.name} added to cart`, "success");
+    toast(`${item.name} (Single Cup) added to cart`, "success");
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -190,7 +196,7 @@ function ProductCard({
                   backgroundClip: "text"
                 }}
               >
-                €{item.price}
+                €6
               </p>
             </div>
 

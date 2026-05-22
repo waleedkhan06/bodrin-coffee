@@ -25,6 +25,11 @@ export function Navigation() {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
   const [badgePop, setBadgePop] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -138,9 +143,9 @@ export function Navigation() {
               className="relative inline-flex glass h-11 w-11 items-center justify-center rounded-full text-cream/80 transition-colors hover:text-gold"
             >
               <Heart size={16} strokeWidth={1.5} />
-              {wishlistCount > 0 && (
+              {mounted && wishlistCount > 0 && (
                 <motion.span
-                  initial={false}
+                  initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
                   style={{ backgroundColor: "#d4af88", color: "#0c0a08" }}
@@ -157,9 +162,9 @@ export function Navigation() {
               className="relative inline-flex glass h-11 w-11 items-center justify-center rounded-full text-cream/80 transition-colors hover:text-gold"
             >
               <ShoppingBag size={16} strokeWidth={1.5} />
-              {itemCount > 0 && (
+              {mounted && itemCount > 0 && (
                 <motion.span
-                  initial={false}
+                  initial={{ scale: 0 }}
                   animate={badgePop ? { scale: [1, 1.4, 1] } : { scale: 1 }}
                   transition={{ duration: 0.35 }}
                   className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"

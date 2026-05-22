@@ -131,6 +131,7 @@ export function FeaturedProductSection() {
                     fill
                     className="object-cover"
                     priority={variant.id === VARIANTS[0].id}
+                    sizes="(min-width: 768px) 50vw, 100vw"
                   />
                 </motion.div>
               </AnimatePresence>

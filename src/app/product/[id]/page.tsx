@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ArrowLeft, ShoppingBag, Heart, Check, Thermometer, Clock, Maximize2, MapPin, Award, Leaf, Coffee } from "lucide-react";
+import { useRouter, useParams } from "next/navigation";
+import { ArrowLeft, ShoppingBag, Heart, Thermometer, Clock, Maximize2, MapPin, Award, Leaf } from "lucide-react";
 import { Navigation } from "@/components/nav/navigation";
 import { Footer } from "@/components/sections/footer";
 import { MagneticButton } from "@/components/ui/magnetic-button";
@@ -12,13 +12,18 @@ import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useToast } from "@/contexts/toast-context";
 import { getProductById, getRelatedProducts } from "@/lib/product-data";
-import { useParams } from "next/navigation";
 
-const GRAM_SIZES = [
-  { grams: "150g", price: "€28" },
-  { grams: "250g", price: "€42" },
-  { grams: "500g", price: "€76" },
-] as const;
+const BEAN_SIZES = [
+  { label: "150g", price: 28 },
+  { label: "250g", price: 42 },
+  { label: "500g", price: 76 },
+];
+
+const CUP_SIZES = [
+  { label: "Single Cup", price: 6 },
+  { label: "Box of 6", price: 32 },
+  { label: "Box of 12", price: 56 },
+];
 
 const ROAST_COLORS: Record<string, string> = {
   Light: "#c4956a",
@@ -29,27 +34,37 @@ const ROAST_COLORS: Record<string, string> = {
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const product = getProductById(id);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedGram, setSelectedGram] = useState(1); // 250g default
+  const [selectedSize, setSelectedSize] = useState(1);
   const { addItem } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const toast = useToast();
   const related = getRelatedProducts(id, 3);
 
-  if (!product) {
-    notFound();
-  }
+  useEffect(() => {
+    if (!product) {
+      router.replace("/");
+    }
+  }, [product, router]);
+
+  if (!product) return null;
+
+  const isFeatured = id.startsWith("featured-");
+  const sizes = isFeatured ? BEAN_SIZES : CUP_SIZES;
+  const displayPrice = sizes[selectedSize].price;
+  const sizeLabel = sizes[selectedSize].label;
 
   const handleAddToCart = () => {
     addItem({
       id: product.id,
       name: product.name,
-      price: product.price,
-      variant: `${GRAM_SIZES[selectedGram].grams}`,
+      price: displayPrice,
+      variant: sizeLabel,
     });
-    toast(`${product.name} added to cart`, "success");
+    toast(`${product.name} (${sizeLabel}) added to cart`, "success");
   };
 
   const handleToggleWishlist = () => {
@@ -144,7 +159,6 @@ export default function ProductDetailPage() {
 
           {/* Product info */}
           <div className="flex flex-col gap-8">
-            {/* Category label */}
             <div>
               <p className="text-[10px] uppercase tracking-[0.4em]" style={{ color: "#a8845e" }}>
                 {product.origin} · {product.altitude}
@@ -154,7 +168,6 @@ export default function ProductDetailPage() {
               </h1>
             </div>
 
-            {/* Description */}
             <p className="max-w-prose text-base leading-relaxed" style={{ color: "rgba(245, 237, 228, 0.65)" }}>
               {product.description}
             </p>
@@ -216,27 +229,27 @@ export default function ProductDetailPage() {
                 backgroundClip: "text",
               }}
             >
-              €{product.price}
+              €{displayPrice}
             </p>
 
-            {/* Gram selector */}
+            {/* Size selector */}
             <div className="space-y-3">
               <p className="text-sm" style={{ color: "rgba(245, 237, 228, 0.6)" }}>
-                Select size:
+                {isFeatured ? "Select size:" : "Select quantity:"}
               </p>
               <div className="flex flex-wrap gap-2">
-                {GRAM_SIZES.map((size, i) => (
+                {sizes.map((size, i) => (
                   <button
-                    key={size.grams}
-                    onClick={() => setSelectedGram(i)}
+                    key={size.label}
+                    onClick={() => setSelectedSize(i)}
                     className="rounded-full px-5 py-2.5 text-sm transition-all hover:scale-105"
                     style={{
-                      backgroundColor: selectedGram === i ? "#d4af88" : "rgba(212, 175, 136, 0.1)",
-                      color: selectedGram === i ? "#0c0a08" : "#d4af88",
+                      backgroundColor: selectedSize === i ? "#d4af88" : "rgba(212, 175, 136, 0.1)",
+                      color: selectedSize === i ? "#0c0a08" : "#d4af88",
                       border: "1px solid rgba(212, 175, 136, 0.3)",
                     }}
                   >
-                    {size.grams} — {size.price}
+                    {size.label} — €{size.price}
                   </button>
                 ))}
               </div>
@@ -369,7 +382,7 @@ export default function ProductDetailPage() {
                           {r.name}
                         </h3>
                         <p className="mt-2 font-display text-lg" style={{ color: "#d4af88" }}>
-                          €{r.price}
+                          €{r.id.startsWith("featured-") ? r.price : 6}
                         </p>
                       </div>
                     </div>

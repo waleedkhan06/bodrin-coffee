@@ -59,7 +59,7 @@ export function CraftsmanshipSection() {
     >
       {/* Marquee overline */}
       <div className="overflow-hidden border-y border-gold/10 py-4">
-        <div className="flex animate-[marquee_40s_linear_infinite] gap-12 whitespace-nowrap text-[10px] uppercase tracking-[0.4em] text-gold-deep">
+        <div className="flex animate-[marquee_10s_linear_infinite] gap-12 whitespace-nowrap text-[10px] uppercase tracking-[0.4em] text-gold-deep">
           {Array.from({ length: 4 }).map((_, i) => (
             <span key={i} className="inline-flex items-center gap-12">
               <span>The Craft</span>
