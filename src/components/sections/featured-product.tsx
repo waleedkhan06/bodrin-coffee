@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Coffee, Leaf, MapPin, Award } from "lucide-react";
+import Link from "next/link";
+import { Coffee, Leaf, MapPin, Award, Eye } from "lucide-react";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { RevealText } from "@/components/ui/reveal-text";
 import { useCart } from "@/contexts/cart-context";
@@ -263,6 +264,12 @@ export function FeaturedProductSection() {
                 <MagneticButton variant="gold" onClick={handleAddToCart}>
                   Add to Cart
                 </MagneticButton>
+                <Link href={`/product/featured-${variant.id}`}>
+                  <MagneticButton variant="outline">
+                    <Eye size={16} strokeWidth={1.6} />
+                    View Details
+                  </MagneticButton>
+                </Link>
               </div>
             </motion.div>
           </AnimatePresence>
