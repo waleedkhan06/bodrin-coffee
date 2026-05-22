@@ -45,6 +45,7 @@ export default function ProductDetailPage() {
   const related = getRelatedProducts(id, 3);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
     if (!product) {
       router.replace("/");
     }
